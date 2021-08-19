@@ -15,7 +15,7 @@ public class Tickety {
         try {
             JDABuilder.createDefault(TOKEN).build();
         }catch (Exception e) {
-
+            //test
         }
     }
 }
