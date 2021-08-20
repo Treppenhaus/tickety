@@ -141,6 +141,9 @@ public class Setup {
 
                     // delete channel
                     ticketChannel.delete().queue();
+
+                    // delete from guild data
+                    GuildSettings.removeTicketFromDataByTicketid(guild, ticketid);
                 }
         );
 

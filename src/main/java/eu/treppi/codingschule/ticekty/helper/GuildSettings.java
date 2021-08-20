@@ -21,6 +21,37 @@ public class GuildSettings {
         FileHelper.writeToFile(new File("data/guilds/"+g.getId()+"/settings.json"), guildData.toString());
     }
 
+    public static void removeTicketFromDataByChannelid(Guild guild, String channelid) {
+        JSONObject settings = getTicketSettingsByChannelId(guild, channelid);
+
+        if(settings != null) {
+            if(settings.has("ticketid")) {
+                removeTicketFromDataByTicketid(guild, settings.getInt("ticketid"));
+            }
+        }
+    }
+
+    public static void removeTicketFromDataByTicketid(Guild guild, int ticketid) {
+        JSONObject guildSettings = GuildSettings.getGuildSettings(guild);
+        JSONArray tickets = GuildSettings.getTickets(guild);
+
+        int rem = -1;
+
+        for(int i = 0; i < tickets.length(); i++) {
+            JSONObject ticket = tickets.getJSONObject(i);
+            if(ticket.has("ticketid")) {
+                if(ticket.getInt("ticketid") == ticketid) {
+                    rem = i;
+                }
+            }
+        }
+
+        if(rem >= 0) tickets.remove(rem);
+
+        guildSettings.put("tickets", tickets);
+        GuildSettings.saveGuildSettings(guild, guildSettings);
+    }
+
     public static JSONObject getTicketSettingsById(Guild g, int ticketid) {
         for(int i = 0; i < getTickets(g).length(); i++) {
             JSONObject obj = getTickets(g).getJSONObject(i);
