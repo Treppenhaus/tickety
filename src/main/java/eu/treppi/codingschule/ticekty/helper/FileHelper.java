@@ -1,5 +1,6 @@
 package eu.treppi.codingschule.ticekty.helper;
 
+import net.dv8tion.jda.api.entities.Guild;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -21,12 +22,8 @@ public class FileHelper {
         return contentBuilder.toString();
     }
 
-    public static String readFile(String path) {
-        return readFile(new File(path));
-    }
-
     public static JSONObject getFileAsObject(File f) {
-        String content = readFile(f);
+        String content = readFile(f).equals("") ? "{}" : readFile(f);
         return new JSONObject(content);
     }
 

@@ -1,4 +1,7 @@
 target/*
 .idea/*
 .git/*
+
+
 config.json
+data/*
