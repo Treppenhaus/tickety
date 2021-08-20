@@ -16,9 +16,7 @@ public class FileHelper {
         try (Stream<String> stream = Files.lines(Paths.get(f.getAbsolutePath()), StandardCharsets.UTF_8)) {
             stream.forEach(s -> contentBuilder.append(s).append("\n"));
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        catch (IOException ignored) { }
         return contentBuilder.toString();
     }
 
@@ -42,7 +40,7 @@ public class FileHelper {
 
                 new File(dirpath.toString()).mkdir();
                 file.createNewFile();
-            }catch (Exception ignored) {}
+            }catch (Exception ignored) {ignored.printStackTrace();}
         }
 
 
