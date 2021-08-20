@@ -21,6 +21,14 @@ public class GuildSettings {
         FileHelper.writeToFile(new File("data/guilds/"+g.getId()+"/settings.json"), guildData.toString());
     }
 
+    public static int runningNumber(Guild g) {
+        JSONObject settings = getGuildSettings(g);
+        int r = settings.has("running") ? settings.getInt("running") + 1 : 0;
+        settings.put("running", r);
+        GuildSettings.saveGuildSettings(g, settings);
+        return r;
+    }
+
     public static void removeTicketFromDataByChannelid(Guild guild, String channelid) {
         JSONObject settings = getTicketSettingsByChannelId(guild, channelid);
 
