@@ -1,5 +1,7 @@
 package eu.treppi.codingschule.ticekty.core;
 
+import eu.treppi.codingschule.ticekty.core.transcript.TicketMessage;
+import eu.treppi.codingschule.ticekty.core.transcript.Transcript;
 import eu.treppi.codingschule.ticekty.helper.GuildSettings;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -10,6 +12,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -166,10 +170,55 @@ public class Setup {
         TextChannel ticketChannel = guild.getTextChannelById(ticketSettings.getString("channelid"));
         ticketChannel.sendMessageEmbeds(Embeds.error("**Ticket closed by "+closer.getAsMention()+"**\nChannel will be deleted in a few Seconds!").build()).queue(
                 message -> {
-                    // todo: archieve logs
 
-                    // delete channel
-                    ticketChannel.delete().queue();
+
+                    // archieve logs
+                    ticketChannel.getHistoryBefore(message, 100).queue(
+                            messageHistory -> {
+
+                                ArrayList<TicketMessage> ticketMessages = new ArrayList<>();
+                                for(int i = messageHistory.getRetrievedHistory().size() - 1; i >= 0; i--) {
+                                    Message msg = messageHistory.getRetrievedHistory().get(i);
+                                    ticketMessages.add(new TicketMessage(
+                                            msg.getAuthor().getAsTag(),
+                                            msg.getContentDisplay(),
+                                            msg.getId(),
+                                            msg.getAuthor().getId(),
+                                            msg.getAuthor().getAvatarUrl()
+                                    ));
+                                }
+
+                                Transcript tscript = new Transcript(
+                                        ticketid,
+                                        ticketSettings.getString("userid"),
+                                        closer.getId(),
+                                        ticketMessages,
+                                        guild
+                                );
+
+                                File f = tscript.generate();
+                                closer.getUser().openPrivateChannel().queue(channel -> channel.sendFile(f).setEmbeds(tscript.getEmbed().build()).queue());
+
+                                Member user = guild.getMemberById(ticketSettings.getString("userid"));
+                                if(user != null) {
+                                    if(!user.getId().equals(closer.getId())) {
+                                        user.getUser().openPrivateChannel().queue(channel -> channel.sendFile(f).setEmbeds(tscript.getEmbed().build()).queue());
+                                    }
+                                }
+
+                                TextChannel logchannel = guild.getTextChannelById(GuildSettings.getGuildSettings(guild).getString("logchannel"));
+                                if(logchannel != null) {
+                                    logchannel.sendFile(f).setEmbeds(tscript.getEmbed().build()).queue();
+                                }
+
+
+                                // delete channel
+                                ticketChannel.delete().queue();
+                            }
+                    );
+
+
+
 
                     // delete from guild data
                     GuildSettings.removeTicketFromDataByTicketid(guild, ticketid);

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+
+    <!-- download this file and view it
+    in your browser! -->
+    <!-- treppi.eu/tickety  -->
+    <!-- treppi#9999        -->
+
+    <meta charset="utf-8">
+    <title>Ticket transcript {ticket.id}</title>
+    <style media="screen">
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #424549;
+        font-family: Arial;
+      }
+      .content {
+        margin: 5%;
+        text-align: left;
+        color: #fff;
+        font-size: 20px;
+        display: inline-block;
+      }
+      .content-wrapper {
+        
+        background-color: #282b30;
+        border-radius: 5px;
+        display: inline-block;
+
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+
+        width: 90%;
+      }
+      .content h1 {
+        font-size: 30px;
+        margin: 0;
+      }
+      .content p {
+        margin: 0;
+      }
+      .message {
+        margin: 10px 0 10px 0;
+      }
+      .message-grid {
+        display: grid;
+        grid-template-columns: 50px auto;
+      }
+      .userimage {
+        height: 50px;
+        width: 50px;
+        border-radius: 50px;
+      }
+      .message-content {
+        position: relative;
+        margin-left: 20px;
+      }
+
+      .footer a {
+        color: #fff;
+        display: inline-grid;
+        grid-template-columns: 30px auto;
+
+        width: 260px;
+        margin-left: auto;
+        margin-right: auto;
+
+        text-decoration: none;
+        margin-top: 70px;
+      }
+
+      .footer a img {
+        height: 30px;
+        width: 30px;
+      }
+      .footer a p {
+        margin-top: auto;
+        margin-bottom: auto;
+      }
+    </style>
+    <style>
+      .header, .footer {
+        display: grid;
+        grid-template-columns: 50px auto;
+
+        color: #fff;
+        font-weight: bolder;
+
+        width: 90%;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+        
+        margin-top: 2vh;
+      }
+
+      .header img, .footer img {
+        width: 50px;
+        height: 50px;
+
+        border-radius: 50%;
+        margin: 0 20px 20px 0;
+      }
+
+      .footer:hover {
+        cursor: pointer;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <img src="{guild.url}" alt="guild icon">
+      <p>{guild.name}</p>
+    </div>
+    <div class="content-wrapper">
+      <div class="content">
+        <h1>Ticket Transcript (ID: {ticket.id})</h1>
+        <hr>
+
+        {messages}
+
+      </div>
+    </div>
+    <div class="footer" onclick='location.href = "https://treppi.eu/tickety"'>
+      <img src="https://i.ahegao.agency/FNHWDRm3D6.png?key=wmxV2Bt8fpGk1v" alt="">
+      <p>https://treppi.eu/tickety</p>
+    </div>
+  </body>
+</html>

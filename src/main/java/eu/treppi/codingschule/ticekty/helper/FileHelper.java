@@ -30,7 +30,7 @@ public class FileHelper {
         File file = new File(path);
         if(!file.exists()) {
             try {
-                String[] x = path.split(".");
+                String[] x = path.split("\\.");
                 String[] y = x[0].split("/");
 
                 StringBuilder dirpath = new StringBuilder();
