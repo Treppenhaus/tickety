@@ -1,6 +1,7 @@
 package eu.treppi.codingschule.ticekty.helper;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -27,6 +28,11 @@ public class GuildSettings {
         settings.put("running", r);
         GuildSettings.saveGuildSettings(g, settings);
         return r;
+    }
+
+    public static int getMaxTicketsPerUser(Guild guild) {
+        JSONObject settings = getGuildSettings(guild);
+        return settings.has("maxperuser") ? settings.getInt("maxperuser") : 2;
     }
 
     public static void removeTicketFromDataByChannelid(Guild guild, String channelid) {
@@ -69,6 +75,20 @@ public class GuildSettings {
                     return obj;
         }
         return null;
+    }
+
+    public static JSONArray getTicketSettingsByUser(Member member) {
+        Guild g = member.getGuild();
+        JSONArray tickets = new JSONArray();
+
+        for(int i = 0; i < getTickets(g).length(); i++) {
+            JSONObject obj = getTickets(g).getJSONObject(i);
+
+            if(obj.has("userid"))
+                if(obj.getString("userid").equals(member.getUser().getId()))
+                    tickets.put(obj);
+        }
+        return tickets;
     }
 
     public static JSONObject getTicketSettingsByChannelId(Guild g, String channelid) {

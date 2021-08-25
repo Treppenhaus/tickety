@@ -42,77 +42,61 @@ public class Setup {
         // create ticket moderator role
         g.createRole().setName(default_rolename).setColor(default_rolecolor).queue(role -> {
 
-
             // create ticket category
             g.createCategory(default_categoryName)
                     .addRolePermissionOverride(role.getIdLong(), default_permissions_mod, null)
                     .addRolePermissionOverride(g.getPublicRole().getIdLong(), null, default_categoryPermissions_no)
                     .queue(category -> {
 
-
-                // create ticket channel
-                // setup permissions for ticket category with moderator role
-                category.createTextChannel(default_channelName).addRolePermissionOverride(g.getPublicRole().getIdLong(), default_channelPermissions_yes, default_channelPermissions_no).queue(channel -> {
-
-                    // send ticket embed
-                    channel.sendMessageEmbeds(Embeds.success("**Ticket Support**\nClick the Button below to open a Ticket!")
-                            .setAuthor(g.getSelfMember().getNickname() == null ? g.getSelfMember().getNickname() : g.getSelfMember().getUser().getName(), Tickety.imageUrl)
-                            .build())
-                            .setActionRow(Button.secondary("tickety-create-ticket", "Open Ticket"))
-                            .queue(message -> {
-
-
-
-
-                                category.createTextChannel(default_transkriptlName)
-                                        .addRolePermissionOverride(g.getPublicRole().getIdLong(), null, default_channelPermissions_yes)
-                                        .addRolePermissionOverride(role.getIdLong(), default_channelPermissions_yes, null)
-                                        .queue(logschannel -> logschannel.sendMessageEmbeds(Embeds.success(
-                                                "** Ticket Archieve \n**" +
-                                                        "This is the channel where closed ticket logs will be sent to.\n" +
-                                                        "It can only be seen by "+role.getAsMention()
-                                        ).build()).queue( tickettranskriptmessage -> {
-
-                                                    log.sendMessageEmbeds(Embeds.success("**success!**\n" +
-                                                    "- created moderation role: "+role.getAsMention()+"\n" +
-                                                    "- created ticket-creation channel: "+channel.getAsMention()+"\n" +
-                                                    "- set up permissions for "+channel.getAsMention() + "\n" +
-                                                    "- sent ticket-creation embed: "+channel.getAsMention()+"\n" +
-                                                    "- created ticket category ("+category.getName()+")\n" +
-                                                    "- set up permissions for ticket category\n" +
-                                                    "- created channel for ticket logs:"+ logschannel.getAsMention()+" \n" +
-                                                    "- set up permissions for "+logschannel.getAsMention()).build()).queue();
-
-
-
-                                                    // store guilddata
-                                                    JSONObject guildData = new JSONObject();
-                                                    guildData.put("ticket-category", category.getId());
-                                                    guildData.put("moderation-role", role.getId());
-                                                    guildData.put("ticketchannel", channel.getId());
-                                                    guildData.put("message", message.getId());
-                                                    guildData.put("logchannel", logschannel.getId());
-
-                                                    JSONArray tickets = GuildSettings.getTickets(g);
-                                                    guildData.put("tickets", tickets);
-
-
-                                                    GuildSettings.saveGuildSettings(g, guildData);
-                                                }
-
-
-
-
-                                        ));
-
-
-
-                    });
-                });
-
+                category.createTextChannel(default_channelName).addRolePermissionOverride(g.getPublicRole().getIdLong(), default_channelPermissions_yes, default_channelPermissions_no)
+                        .queue(channel -> channel.sendMessageEmbeds(Embeds.success("**Ticket Support**\nClick the Button below to open a Ticket!")
+                                .setAuthor(g.getSelfMember().getNickname() == null ? g.getSelfMember().getNickname() : g.getSelfMember().getUser().getName(), Tickety.imageUrl)
+                                .build())
+                                .setActionRow(Button.secondary("tickety-create-ticket", "Open Ticket"))
+                                .queue(message -> setupChannel(category, role, channel, log, message)));
 
             });
         });
+    }
+
+    public static void setupChannel(Category category, Role role, TextChannel channel, TextChannel log, Message message) {
+        Guild g = category.getGuild();
+        category.createTextChannel(default_transkriptlName)
+                .addRolePermissionOverride(g.getPublicRole().getIdLong(), null, default_channelPermissions_yes)
+                .addRolePermissionOverride(role.getIdLong(), default_channelPermissions_yes, null)
+                .queue(logschannel -> logschannel.sendMessageEmbeds(Embeds.success(
+                        "** Ticket Archieve \n**" +
+                                "This is the channel where closed ticket logs will be sent to.\n" +
+                                "It can only be seen by "+role.getAsMention()
+                ).build()).queue( tickettranskriptmessage -> {
+
+                            log.sendMessageEmbeds(Embeds.success("**success!**\n" +
+                                    "- created moderation role: "+role.getAsMention()+"\n" +
+                                    "- created ticket-creation channel: "+channel.getAsMention()+"\n" +
+                                    "- set up permissions for "+channel.getAsMention() + "\n" +
+                                    "- sent ticket-creation embed: "+channel.getAsMention()+"\n" +
+                                    "- created ticket category ("+category.getName()+")\n" +
+                                    "- set up permissions for ticket category\n" +
+                                    "- created channel for ticket logs:"+ logschannel.getAsMention()+" \n" +
+                                    "- set up permissions for "+logschannel.getAsMention()).build()).queue();
+
+
+
+                            // store guilddata
+                            JSONObject guildData = new JSONObject();
+                            guildData.put("ticket-category", category.getId());
+                            guildData.put("moderation-role", role.getId());
+                            guildData.put("ticketchannel", channel.getId());
+                            guildData.put("message", message.getId());
+                            guildData.put("logchannel", logschannel.getId());
+
+                            JSONArray tickets = GuildSettings.getTickets(g);
+                            guildData.put("tickets", tickets);
+
+
+                            GuildSettings.saveGuildSettings(g, guildData);
+                        }
+                ));
     }
 
     public static void setupNewTicket(ButtonClickEvent event) {
