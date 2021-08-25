@@ -10,15 +10,15 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class Transcript {
-    String userID, closerID;
+    Member user, closer;
     ArrayList<TicketMessage> messages;
     Guild guild;
     int ticketid;
 
 
-    public Transcript(int ticketid, String user, String closer, ArrayList<TicketMessage> messages, Guild guild) {
-        this.userID = user;
-        this.closerID = closer;
+    public Transcript(int ticketid, Member user, Member closer, ArrayList<TicketMessage> messages, Guild guild) {
+        this.user = user;
+        this.closer = closer;
         this.messages = messages;
         this.ticketid = ticketid;
         this.guild = guild;
@@ -26,14 +26,10 @@ public class Transcript {
 
     public EmbedBuilder getEmbed() {
 
-        Member member = guild.getMemberById(userID);
-        Member closer = guild.getMemberById(closerID);
-
-
         return Embeds.success("" +
             "**__" + ticketid+" closed __**\n" +
-            "**User: **"+ member != null ? member.getAsMention() : userID + "\n" +
-            "**Closed by: **"+ closer != null ? closer.getAsMention() : userID + "\n");
+            "**User: **"+ (user != null ? user.getAsMention() : "") + "\n" +
+            "**Closed by: **"+ (closer != null ? closer.getAsMention() : "") + "\n");
     }
 
 

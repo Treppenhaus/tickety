@@ -15,11 +15,8 @@ public class TicketClose extends ListenerAdapter {
     @Override
     public void onButtonClick(ButtonClickEvent e) {
         if (e.getComponentId().startsWith("tickety-close-ticket-")) {
-
-            String[] args = e.getComponentId().split("-");
-            int ticketid = Integer.parseInt(args[3]);
-
-            Setup.closeTicket(e.getMember(), ticketid);
+            JSONObject channelSettings = GuildSettings.getTicketSettingsByChannelId(e.getGuild(), e.getChannel().getId());
+            Setup.closeTicket(e.getMember(), e.getTextChannel(), channelSettings);
         }
     }
 
@@ -37,7 +34,7 @@ public class TicketClose extends ListenerAdapter {
                 if(role.getId().equals(GuildSettings.getGuildSettings(guild).getString("moderation-role")) || e.getMember().hasPermission(Permission.ADMINISTRATOR)) {
 
                     JSONObject channelSettings = GuildSettings.getTicketSettingsByChannelId(guild, e.getChannel().getId());
-                    Setup.closeTicket(e.getMember(), channelSettings.getInt("ticketid"));
+                    Setup.closeTicket(e.getMember(), e.getChannel(), channelSettings);
                     return;
                 }
             }

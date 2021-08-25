@@ -161,69 +161,83 @@ public class Setup {
                 });
     }
 
-    public static void closeTicket(Member closer, int ticketid) {
+    public static void closeTicket(Member closer, TextChannel ticketChannel, JSONObject channelSettings) {
         Guild guild = closer.getGuild();
-        JSONObject ticketSettings = GuildSettings.getTicketSettingsById(guild, ticketid);
-        if(ticketSettings == null) return;
+        int ticketid = channelSettings == null ? -1 : channelSettings.has("ticketid") ? channelSettings.getInt("ticketid") : -1;
+        ticketid = ticketid == -1 ? getIDByChannelName(ticketChannel) : ticketid;
 
         // send closing embed
-        TextChannel ticketChannel = guild.getTextChannelById(ticketSettings.getString("channelid"));
-        ticketChannel.sendMessageEmbeds(Embeds.error("**Ticket closed by "+closer.getAsMention()+"**\nChannel will be deleted in a few Seconds!").build()).queue(
-                message -> {
+        int finalTicketid = ticketid;
+        ticketChannel.sendMessageEmbeds(Embeds.closingTicket(closer).build()).queue(
+                message -> ticketChannel.getHistoryBefore(message, 100).queue(
+                        messageHistory -> {
 
-
-                    // archieve logs
-                    ticketChannel.getHistoryBefore(message, 100).queue(
-                            messageHistory -> {
-
-                                ArrayList<TicketMessage> ticketMessages = new ArrayList<>();
-                                for(int i = messageHistory.getRetrievedHistory().size() - 1; i >= 0; i--) {
-                                    Message msg = messageHistory.getRetrievedHistory().get(i);
-                                    ticketMessages.add(new TicketMessage(
-                                            msg.getAuthor().getAsTag(),
-                                            msg.getContentDisplay(),
-                                            msg.getId(),
-                                            msg.getAuthor().getId(),
-                                            msg.getAuthor().getAvatarUrl()
-                                    ));
-                                }
-
-                                Transcript tscript = new Transcript(
-                                        ticketid,
-                                        ticketSettings.getString("userid"),
-                                        closer.getId(),
-                                        ticketMessages,
-                                        guild
-                                );
-
-                                File f = tscript.generate();
-                                closer.getUser().openPrivateChannel().queue(channel -> channel.sendFile(f).setEmbeds(tscript.getEmbed().build()).queue());
-
-                                Member user = guild.getMemberById(ticketSettings.getString("userid"));
-                                if(user != null) {
-                                    if(!user.getId().equals(closer.getId())) {
-                                        user.getUser().openPrivateChannel().queue(channel -> channel.sendFile(f).setEmbeds(tscript.getEmbed().build()).queue());
-                                    }
-                                }
-
-                                TextChannel logchannel = guild.getTextChannelById(GuildSettings.getGuildSettings(guild).getString("logchannel"));
-                                if(logchannel != null) {
-                                    logchannel.sendFile(f).setEmbeds(tscript.getEmbed().build()).queue();
-                                }
-
-
-                                // delete channel
-                                ticketChannel.delete().queue();
+                            Member member = null;
+                            if(channelSettings != null) {
+                                String userid = channelSettings.getString("userid");
+                                member = guild.getMemberById(userid);
                             }
-                    );
+
+                            Transcript tscript = createTranscript(messageHistory, channelSettings, guild, member, closer, finalTicketid);
+                            handleTranscript(tscript, ticketChannel, guild, member, closer);
 
 
-
-
-                    // delete from guild data
-                    GuildSettings.removeTicketFromDataByTicketid(guild, ticketid);
-                }
+                            // delete channel & guild data
+                            ticketChannel.delete().queue();
+                            GuildSettings.removeTicketFromDataByTicketid(guild, finalTicketid);
+                        }
+                )
         );
 
+    }
+
+    public static void handleTranscript(Transcript tscript, TextChannel ticketChannel, Guild guild, Member member, Member closer) {
+        File f = tscript.generate();
+        closer.getUser().openPrivateChannel().queue(channel -> channel.sendFile(f).setEmbeds(tscript.getEmbed().build()).queue());
+
+        if(member != null)
+            if(!member.getId().equals(closer.getId()))
+                member.getUser().openPrivateChannel().queue(channel -> channel.sendFile(f).setEmbeds(tscript.getEmbed().build()).queue());
+
+        else
+            ticketChannel.sendMessageEmbeds(Embeds.error("Could not find user.").build()).queue();
+
+
+        TextChannel logchannel = guild.getTextChannelById(GuildSettings.getGuildSettings(guild).getString("logchannel"));
+        if(logchannel != null) {
+            logchannel.sendFile(f).setEmbeds(tscript.getEmbed().build()).queue();
+        }
+    }
+
+    public static Transcript createTranscript(MessageHistory messageHistory, JSONObject channelSettings, Guild guild, Member member, Member closer, int finalTicketid) {
+        ArrayList<TicketMessage> ticketMessages = new ArrayList<>();
+        for(int i = messageHistory.getRetrievedHistory().size() - 1; i >= 0; i--) {
+            Message msg = messageHistory.getRetrievedHistory().get(i);
+            ticketMessages.add(new TicketMessage(
+                    msg.getAuthor().getAsTag(),
+                    msg.getContentDisplay(),
+                    msg.getId(),
+                    msg.getAuthor().getId(),
+                    msg.getAuthor().getAvatarUrl()
+            ));
+        }
+
+        return new Transcript(
+                finalTicketid,
+                member,
+                closer,
+                ticketMessages,
+                guild
+        );
+    }
+
+    public static int getIDByChannelName(TextChannel channel) {
+        String[] args = channel.getName().split("-");
+
+        try {
+            return Integer.parseInt(args[args.length -1]);
+        } catch (NumberFormatException ignored) {
+            return -1;
+        }
     }
 }
