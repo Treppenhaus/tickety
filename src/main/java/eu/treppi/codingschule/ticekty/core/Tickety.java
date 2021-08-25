@@ -1,6 +1,8 @@
 package eu.treppi.codingschule.ticekty.core;
 
 import eu.treppi.codingschule.ticekty.core.commands.AutosetupCommand;
+import eu.treppi.codingschule.ticekty.core.commands.HelpCommand;
+import eu.treppi.codingschule.ticekty.core.commands.InviteCommand;
 import eu.treppi.codingschule.ticekty.core.listeners.TicketChannelDelete;
 import eu.treppi.codingschule.ticekty.core.listeners.TicketClose;
 import eu.treppi.codingschule.ticekty.core.listeners.TicketCreation;
@@ -33,6 +35,8 @@ public class Tickety {
             builder.addEventListeners(new TicketCreation());
             builder.addEventListeners(new TicketClose());
             builder.addEventListeners(new TicketChannelDelete());
+            builder.addEventListeners(new InviteCommand());
+            builder.addEventListeners(new HelpCommand());
             api = builder.build();
 
         }catch (Exception e) {

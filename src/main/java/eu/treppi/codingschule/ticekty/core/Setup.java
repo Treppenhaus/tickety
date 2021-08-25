@@ -7,12 +7,15 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.components.Button;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.awt.*;
 import java.io.File;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -100,6 +103,7 @@ public class Setup {
     }
 
     public static void setupNewTicket(ButtonClickEvent event) {
+
         Member member = event.getMember();
         Guild guild = member.getGuild();
 
@@ -118,31 +122,61 @@ public class Setup {
                             .setEphemeral(true)
                             .queue();
 
-                    // send ticket embed message with close button
-                    EmbedBuilder b = Embeds.success("**Ticket Support**\n" +
-                            "Press the Button to Close your Ticket!\n\n" +
-                            "" +
-                            "Ticket by: "+member.getAsMention());
-                    b.setTimestamp(event.getTimeCreated());
-
-                    ticketChannel.sendMessageEmbeds(b.build())
-                            .setActionRow(Button.secondary("tickety-close-ticket-"+amount, "Close Ticket"))
-                            .queue();
-
-
-                    // save ticket information
-                    JSONObject ticketOptions = new JSONObject();
-                    ticketOptions.put("userid", member.getId());
-                    ticketOptions.put("ticketid", amount);
-                    ticketOptions.put("title", ticketTitle);
-                    ticketOptions.put("channelid", ticketChannel.getId());
-
-                    JSONArray tickets = GuildSettings.getTickets(guild);
-                    tickets.put(ticketOptions);
-
-                    guildSettings.put("tickets", tickets);
-                    GuildSettings.saveGuildSettings(guild, guildSettings);
+                    sendSuccessEmbed(member, ticketChannel, amount, event.getTimeCreated());
+                    saveTicketInformation(member, amount, ticketTitle, ticketChannel, guild, guildSettings);
                 });
+    }
+
+
+    public static void setupNewTicket(MessageReceivedEvent event) {
+
+        Member member = event.getMember();
+        Guild guild = member.getGuild();
+
+        final int amount = GuildSettings.runningNumber(guild);
+        final String ticketTitle = "ticket-"+amount;
+
+        JSONObject guildSettings = GuildSettings.getGuildSettings(guild);
+        Category category = guild.getCategoryById(guildSettings.getString("ticket-category"));
+
+        // create text channel
+        category.createTextChannel(ticketTitle)
+                .addMemberPermissionOverride(member.getIdLong(), default_ownticket_yes, default_ownticket_no)
+                .queue(ticketChannel -> {
+
+                    event.getAuthor().openPrivateChannel().queue(channel ->
+                            channel.sendMessage("Ticket in "+guild.getName()+" Created! " + ticketChannel.getAsMention())
+                            .queue());
+
+                    sendSuccessEmbed(member, ticketChannel, amount, event.getMessage().getTimeCreated());
+                    saveTicketInformation(member, amount, ticketTitle, ticketChannel, guild, guildSettings);
+                });
+    }
+
+    public static void saveTicketInformation(Member member, int amount, String ticketTitle, TextChannel ticketChannel, Guild guild, JSONObject guildSettings) {
+        JSONObject ticketOptions = new JSONObject();
+        ticketOptions.put("userid", member.getId());
+        ticketOptions.put("ticketid", amount);
+        ticketOptions.put("title", ticketTitle);
+        ticketOptions.put("channelid", ticketChannel.getId());
+
+        JSONArray tickets = GuildSettings.getTickets(guild);
+        tickets.put(ticketOptions);
+
+        guildSettings.put("tickets", tickets);
+        GuildSettings.saveGuildSettings(guild, guildSettings);
+    }
+
+    public static void sendSuccessEmbed(Member member, TextChannel ticketChannel, int amount, OffsetDateTime time) {
+        EmbedBuilder b = Embeds.success("**Ticket Support**\n" +
+                "Press the Button to Close your Ticket!\n\n" +
+                "" +
+                "Ticket by: "+member.getAsMention());
+        b.setTimestamp(time);
+
+        ticketChannel.sendMessageEmbeds(b.build())
+                .setActionRow(Button.secondary("tickety-close-ticket-"+amount, "Close Ticket"))
+                .queue();
     }
 
     public static void closeTicket(Member closer, TextChannel ticketChannel, JSONObject channelSettings) {

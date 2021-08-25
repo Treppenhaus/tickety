@@ -13,6 +13,13 @@ public class Embeds {
         return b;
     }
 
+    public static EmbedBuilder tickety(String message) {
+        EmbedBuilder b = new EmbedBuilder();
+        b.setColor(new Color(107, 99, 224));
+        b.setDescription(message);
+        return b;
+    }
+
     public static EmbedBuilder success(String message) {
         EmbedBuilder b = new EmbedBuilder();
         b.setColor(new Color(89, 217, 119));
