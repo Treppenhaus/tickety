@@ -40,7 +40,7 @@ public class FileHelper {
 
                 new File(dirpath.toString()).mkdir();
                 file.createNewFile();
-            }catch (Exception ignored) {ignored.printStackTrace();}
+            }catch (Exception ignored) {}
         }
 
 

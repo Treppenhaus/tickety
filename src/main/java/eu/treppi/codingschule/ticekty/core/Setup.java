@@ -73,7 +73,7 @@ public class Setup {
                                 "It can only be seen by "+role.getAsMention()
                 ).build()).queue( tickettranskriptmessage -> {
 
-                            log.sendMessageEmbeds(Embeds.success("**success!**\n" +
+                            log.sendMessageEmbeds(Embeds.success("**All set up!**\n" +
                                     "- created moderation role: "+role.getAsMention()+"\n" +
                                     "- created ticket-creation channel: "+channel.getAsMention()+"\n" +
                                     "- set up permissions for "+channel.getAsMention() + "\n" +
