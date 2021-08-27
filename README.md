@@ -9,8 +9,8 @@ originally made for the [.gg/schule](https://discord.gg/schule) bot-jam
 
 ---
 # quicklinks
-<a href="#features">Feature List</a>
-<a href="#setup">Setup & Settings</a>
+- <a href="#features">Feature List</a>
+- <a href="#setup">Setup & Settings</a>
 ---
 
 
