@@ -20,12 +20,9 @@ public class Tickety {
     private static final JSONObject CONFIG = FileHelper.getFileAsObject(new File("config.json"));
     private static final String TOKEN = CONFIG.getString("token");
     public static final String INVITE = CONFIG.getString("invite");
-
     public static final String imageUrl = "https://i.ahegao.agency/FNHWDRm3D6.png?key=wmxV2Bt8fpGk1v";
 
-    public static final String prefix = "t!";
     public static final boolean ignoreBots = true;
-
     private static JDA api;
 
     public static void main(String[] args) {

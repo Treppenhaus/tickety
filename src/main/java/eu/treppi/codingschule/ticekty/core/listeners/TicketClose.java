@@ -25,9 +25,10 @@ public class TicketClose extends ListenerAdapter {
     public void onGuildMessageReceived(GuildMessageReceivedEvent e) {
 
         if(Tickety.ignoreBots && e.getAuthor().isBot()) return;
+        String prefix = GuildSettings.getPrefix(e.getGuild());
 
         String content = e.getMessage().getContentRaw();
-        if(content.startsWith(Tickety.prefix+"close")) {
+        if(content.startsWith(prefix+"close")) {
             Guild guild = e.getGuild();
 
             for(Role role : e.getMember().getRoles()) {

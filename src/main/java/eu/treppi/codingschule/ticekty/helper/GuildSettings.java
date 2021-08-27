@@ -18,6 +18,11 @@ public class GuildSettings {
         return FileHelper.getFileAsObject(new File("data/guilds/"+g.getId()+"/settings.json"));
     }
 
+    public static String getPrefix(Guild guild) {
+        // change this later and make it configurable
+        return "t!";
+    }
+
     public static void saveGuildSettings(Guild g, JSONObject guildData) {
         FileHelper.writeToFile(new File("data/guilds/"+g.getId()+"/settings.json"), guildData.toString());
     }

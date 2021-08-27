@@ -17,16 +17,17 @@ public class SettingsCommand extends ListenerAdapter {
         if(Tickety.ignoreBots && e.getAuthor().isBot()) return;
         String content = e.getMessage().getContentRaw();
         String[] args = e.getMessage().getContentRaw().split(" ");
+        String prefix = GuildSettings.getPrefix(e.getGuild());
 
-        if(content.startsWith(Tickety.prefix+"settings")) {
+        if(content.startsWith(prefix+"settings")) {
 
             if(args.length == 1) {
-                showSettings(e.getTextChannel(), Tickety.prefix);
+                showSettings(e.getTextChannel(), prefix);
             }
             else if(args.length >= 2) {
                 switch (args[1].toLowerCase()) {
-                    case "maxtickets": setMaxTickets(e, args, Tickety.prefix);
-                    case "modrole": setModRole(e, args, Tickety.prefix);
+                    case "maxtickets": setMaxTickets(e, args, prefix);
+                    case "modrole": setModRole(e, args, prefix);
                 }
             }
         }

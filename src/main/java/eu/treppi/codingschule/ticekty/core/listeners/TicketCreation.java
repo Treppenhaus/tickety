@@ -27,9 +27,10 @@ public class TicketCreation extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
         if(Tickety.ignoreBots && e.getAuthor().isBot()) return;
+        String prefix = GuildSettings.getPrefix(e.getGuild());
         String content = e.getMessage().getContentRaw();
 
-        if(content.startsWith(Tickety.prefix+"open")) {
+        if(content.startsWith(prefix+"open")) {
             e.getMessage().delete().queue();
             if(canCreateTicket(e.getMember()))
                 Setup.setupNewTicket(e);
