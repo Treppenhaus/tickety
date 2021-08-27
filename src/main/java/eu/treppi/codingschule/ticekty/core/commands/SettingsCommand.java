@@ -3,6 +3,7 @@ package eu.treppi.codingschule.ticekty.core.commands;
 import eu.treppi.codingschule.ticekty.core.Embeds;
 import eu.treppi.codingschule.ticekty.core.Tickety;
 import eu.treppi.codingschule.ticekty.helper.GuildSettings;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
@@ -21,14 +22,19 @@ public class SettingsCommand extends ListenerAdapter {
 
         if(content.startsWith(prefix+"settings")) {
 
-            if(args.length == 1) {
-                showSettings(e.getTextChannel(), prefix);
-            }
-            else if(args.length >= 2) {
-                switch (args[1].toLowerCase()) {
-                    case "maxtickets": setMaxTickets(e, args, prefix);
-                    case "modrole": setModRole(e, args, prefix);
+            if(e.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                if(args.length == 1) {
+                    showSettings(e.getTextChannel(), prefix);
                 }
+                else if(args.length >= 2) {
+                    switch (args[1].toLowerCase()) {
+                        case "maxtickets": setMaxTickets(e, args, prefix);
+                        case "modrole": setModRole(e, args, prefix);
+                    }
+                }
+            }
+            else {
+                e.getMessage().replyEmbeds(Embeds.error("For security reasons, only members with the `administrator`-permission are allowed to use `"+prefix+"settings`.").build()).queue();
             }
         }
     }
