@@ -32,11 +32,11 @@ Use `t!autosetup`. Tickety will **automatically create**
 First, look up your guild settings using `t!settings`. Commands with the * are required to do / stuff is required in order for tickety to work.
 Now you can change everything using the below commands:
 
-`t!settings maxtickets <numer>` - changes the number of tickets a user can have at the same time (default: 2)
-`t!settings modrole <roleid/@role>` - this role is automatically granted permission to see and write in all ticket channels as well as to see the channels where transcripts are sent to. If you have not set up a modrole, the ticket channels will only be seen by people with administrator permissions
-`t!settings logchannel <channel/#channel>` - sets the channel where transcripts are sent to whenever a ticket is closed
-`t!settings category <categoryid/name>` - sets the category under which new tickets will be opened. If you have multiple categories with the same name, use the ID. Otherwise, the first one will be selected.
-\*`t!settings sendticketmessage` - sets the ticket channel where a message with an embed + button is sent to. **TODO: make message configurable!**
+- `t!settings maxtickets <numer>` - changes the number of tickets a user can have at the same time (default: 2)
+- `t!settings modrole <roleid/@role>` - this role is automatically granted permission to see and write in all ticket channels as well as to see the channels where transcripts are sent to. If you have not set up a modrole, the ticket channels will only be seen by people with administrator permissions
+- `t!settings logchannel <channel/#channel>` - sets the channel where transcripts are sent to whenever a ticket is closed
+- `t!settings category <categoryid/name>` - sets the category under which new tickets will be opened. If you have multiple categories with the same name, use the ID. Otherwise, the first one will be selected.
+- \*`t!settings sendticketmessage` - sets the ticket channel where a message with an embed + button is sent to. **TODO: make message configurable!**
 
 You can also check if tickety is set up correctly using the `t!settings` or `t!setup` command.
 todo: add screenshot
