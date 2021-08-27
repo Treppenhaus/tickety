@@ -1,6 +1,11 @@
+
+#**this readme is not finished yet**
+---
+---
+---
 # tickety
 ticket bot for .gg/schule bot-jam
-#**this readme is not finished yet**
+
 ![test](https://github.com/treppenhaus/tickety/actions/workflows/maven.yml/badge.svg)
 
 
