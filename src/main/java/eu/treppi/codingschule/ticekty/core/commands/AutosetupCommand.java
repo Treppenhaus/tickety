@@ -16,13 +16,15 @@ public class AutosetupCommand extends ListenerAdapter {
         String prefix = GuildSettings.getPrefix(e.getGuild());
         String content = e.getMessage().getContentRaw();
 
-        if(e.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-            if(content.startsWith(prefix+"autosetup")) {
+
+        if(content.startsWith(prefix+"autosetup")) {
+            if(e.getMember().hasPermission(Permission.ADMINISTRATOR)) {
                 Setup.autoSetupGuild(e.getGuild(), e.getTextChannel());
             }
+            else {
+                e.getMessage().replyEmbeds(Embeds.error("For security reasons, only members with the `administrator`-permission are allowed to use `"+prefix+"autosetup`.").build()).queue();
+            }
         }
-        else {
-            e.getMessage().replyEmbeds(Embeds.error("For security reasons, only members with the `administrator`-permission are allowed to use `"+prefix+"settings`.").build()).queue();
-        }
+
     }
 }

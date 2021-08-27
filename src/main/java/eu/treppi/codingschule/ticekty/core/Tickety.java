@@ -11,6 +11,7 @@ import eu.treppi.codingschule.ticekty.helper.FileHelper;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Member;
 import org.json.JSONObject;
 
@@ -36,6 +37,9 @@ public class Tickety {
             builder.addEventListeners(new InviteCommand());
             builder.addEventListeners(new HelpCommand());
             builder.addEventListeners(new SettingsCommand());
+
+            builder.setActivity(Activity.listening("t!help / @me help"));
+
             api = builder.build();
 
         }catch (Exception e) {
