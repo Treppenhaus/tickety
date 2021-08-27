@@ -131,6 +131,7 @@ public class Setup {
     public static void setupNewTicket(MessageReceivedEvent event) {
 
         Member member = event.getMember();
+        assert member != null;
         Guild guild = member.getGuild();
 
         final int amount = GuildSettings.runningNumber(guild);
@@ -139,18 +140,29 @@ public class Setup {
         JSONObject guildSettings = GuildSettings.getGuildSettings(guild);
         Category category = guild.getCategoryById(guildSettings.getString("ticket-category"));
 
-        // create text channel
-        category.createTextChannel(ticketTitle)
-                .addMemberPermissionOverride(member.getIdLong(), default_ownticket_yes, default_ownticket_no)
-                .queue(ticketChannel -> {
+        if(category != null) {
+            // create text channel
+            category.createTextChannel(ticketTitle)
+                    .addMemberPermissionOverride(member.getIdLong(), default_ownticket_yes, default_ownticket_no)
+                    .queue(ticketChannel -> {
 
-                    event.getAuthor().openPrivateChannel().queue(channel ->
-                            channel.sendMessage("Ticket in "+guild.getName()+" Created! " + ticketChannel.getAsMention())
-                            .queue());
+                        event.getAuthor().openPrivateChannel().queue(channel ->
+                                channel.sendMessage("Ticket in "+guild.getName()+" Created! " + ticketChannel.getAsMention())
+                                        .queue());
 
-                    sendSuccessEmbed(member, ticketChannel, amount, event.getMessage().getTimeCreated());
-                    saveTicketInformation(member, amount, ticketTitle, ticketChannel, guild, guildSettings);
-                });
+                        sendSuccessEmbed(member, ticketChannel, amount, event.getMessage().getTimeCreated());
+                        saveTicketInformation(member, amount, ticketTitle, ticketChannel, guild, guildSettings);
+                    });
+        }
+        else {
+            User creator = event.getAuthor();
+            creator.openPrivateChannel().queue( channel -> channel.sendMessage(Embeds.error("**The Ticket-Category was not found!**\n" +
+                    "please tell your server administrator to\n" +
+                    "- set their ticket-category with `t!settings category <categoryid>`\n" +
+                    "- review their guild settings with `t!settings`").build()).queue());
+        }
+
+
     }
 
     public static void saveTicketInformation(Member member, int amount, String ticketTitle, TextChannel ticketChannel, Guild guild, JSONObject guildSettings) {
