@@ -19,7 +19,6 @@ public class SettingsCommand extends ListenerAdapter {
         String[] args = e.getMessage().getContentRaw().split(" ");
 
         if(content.startsWith(Tickety.prefix+"settings")) {
-            e.getChannel().sendTyping().queue();
 
             if(args.length == 1) {
                 showSettings(e.getTextChannel(), Tickety.prefix);
@@ -27,8 +26,45 @@ public class SettingsCommand extends ListenerAdapter {
             else if(args.length >= 2) {
                 switch (args[1].toLowerCase()) {
                     case "maxtickets": setMaxTickets(e, args, Tickety.prefix);
+                    case "modrole": setModRole(e, args, Tickety.prefix);
                 }
             }
+        }
+    }
+
+    private static void setModRole(MessageReceivedEvent e, String[] args, String prefix) {
+        final String syntax = "Syntax: `"+prefix+"settings modrole <roleid/@mention>`\nSets the role of people who are granted permission to see tickets by default";
+
+        if(args.length >= 3) {
+            Guild g = e.getGuild();
+
+            String roleid = args[2];
+            Role role = null;
+
+            try {
+                role = g.getRoleById(roleid);
+            }catch (NumberFormatException exception) {
+                if(e.getMessage().getMentionedRoles().size() == 1) {
+                    role = e.getMessage().getMentionedRoles().get(0);
+                    roleid = role.getId();
+                }
+            }
+
+            if(role == null) {
+                e.getChannel().sendMessage(Embeds.error(syntax + "\n\n-> `"+roleid+"` could not find a role with that id.\n" +
+                        "[How to get IDs](https://ozonprice.com/blog/discord-get-role-id/) <- also applies to channels/categories").build()).queue();
+                return;
+            }
+
+
+            JSONObject guildSettings = GuildSettings.getGuildSettings(g);
+            guildSettings.put("moderation-role", roleid);
+            GuildSettings.saveGuildSettings(g, guildSettings);
+
+            e.getChannel().sendMessage(Embeds.success("New Modrole: "+role.getAsMention() + "(`"+roleid+"`)").build()).queue();
+        }
+        else {
+            e.getChannel().sendMessageEmbeds(Embeds.error(syntax).build()).queue();
         }
     }
 
@@ -57,7 +93,7 @@ public class SettingsCommand extends ListenerAdapter {
         }
     }
 
-    public static void showSettings(TextChannel channel, String prefix) {
+    private static void showSettings(TextChannel channel, String prefix) {
         Guild guild = channel.getGuild();
         JSONObject guildSettings = GuildSettings.getGuildSettings(guild);
 
