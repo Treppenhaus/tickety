@@ -39,6 +39,9 @@ public class SettingsCommand extends ListenerAdapter {
                             return;
                         case "ticketchannel":
                             setChannel("ticketchannel", "The channel with the 'create-ticket'-embed and button.", e, args, prefix);
+                            return;
+                        case "category":
+                            setCategory(e, args, prefix);
                     }
                 }
             }
@@ -46,6 +49,45 @@ public class SettingsCommand extends ListenerAdapter {
                 e.getMessage().replyEmbeds(Embeds.error("For security reasons, only members with the `administrator`-permission are allowed to use `"+prefix+"settings`.").build()).queue();
             }
         }
+    }
+
+    private static void setCategory(MessageReceivedEvent e, String[] args, String prefix) {
+        final String syntax = "Syntax: `"+prefix+"settings category <categoryid>`\nThe category under which new ticket channels are created.";
+
+        if(args.length >= 3) {
+            Guild guild = e.getGuild();
+            String categoryid = args[2];
+
+
+            Category category = null;
+            try {
+                category = guild.getCategoriesByName(categoryid, false).get(0);
+                categoryid = category.getId();
+            }catch (NumberFormatException | IndexOutOfBoundsException ignored) {}
+            try {
+                if(category == null) {
+                    category = guild.getCategoryById(categoryid);
+                }
+            }catch (Exception ignored) {}
+
+
+            if(category == null) {
+                e.getChannel().sendMessageEmbeds(Embeds.error(syntax + "\n\n-> `"+categoryid+"` could not find a category with that id.\n" +
+                        "[How to get IDs](https://ozonprice.com/blog/discord-get-role-id/) <- also applies to channels/categories").build()).queue();
+                return;
+            }
+
+
+            JSONObject guildSettings = GuildSettings.getGuildSettings(guild);
+            guildSettings.put("ticket-category", categoryid);
+            GuildSettings.saveGuildSettings(guild, guildSettings);
+
+            e.getChannel().sendMessageEmbeds(Embeds.success("New Category: "+category.getAsMention() + "(`"+categoryid+"`)").build()).queue();
+        }
+        else {
+            e.getChannel().sendMessageEmbeds(Embeds.error(syntax).build()).queue();
+        }
+
     }
 
     private static void setChannel(String configname, String description, MessageReceivedEvent e, String[] args, String prefix) {
@@ -165,8 +207,9 @@ public class SettingsCommand extends ListenerAdapter {
                 "\n" +
                 "You can change settings using the following commands:\n" +
                 "`"+prefix+"settings maxtickets <amount>`\n" +
-                "`"+prefix+"settings modrole <roleid>`\n" +
-                "`"+prefix+"settings logchannel <channelid>`\n" +
+                "`"+prefix+"settings modrole <roleid/@mention>`\n" +
+                "`"+prefix+"settings logchannel <channelid/#mention>`\n" +
+                "`"+prefix+"settings ticketchannel <channelid/#mention>`\n" +
                 "`"+prefix+"settings category <categoryid>`\n" +
                 "`"+prefix+"settings sendticketmessage <channelid>` (Also sets the ticket channel with the button)\n\n" +
                 "[How do i get an ID?](https://ozonprice.com/blog/discord-get-role-id/) <- Same applies to channels and categories" +
