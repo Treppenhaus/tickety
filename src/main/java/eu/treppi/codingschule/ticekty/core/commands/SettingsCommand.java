@@ -28,14 +28,57 @@ public class SettingsCommand extends ListenerAdapter {
                 }
                 else if(args.length >= 2) {
                     switch (args[1].toLowerCase()) {
-                        case "maxtickets": setMaxTickets(e, args, prefix);
-                        case "modrole": setModRole(e, args, prefix);
+                        case "maxtickets":
+                            setMaxTickets(e, args, prefix);
+                            return;
+                        case "modrole":
+                            setModRole(e, args, prefix);
+                            return;
+                        case "logchannel":
+                            setChannel("logchannel", "The channel where ticket transcripts will be sent to.", e, args, prefix);
+                            return;
+                        case "ticketchannel":
+                            setChannel("ticketchannel", "The channel with the 'create-ticket'-embed and button.", e, args, prefix);
                     }
                 }
             }
             else {
                 e.getMessage().replyEmbeds(Embeds.error("For security reasons, only members with the `administrator`-permission are allowed to use `"+prefix+"settings`.").build()).queue();
             }
+        }
+    }
+
+    private static void setChannel(String configname, String description, MessageReceivedEvent e, String[] args, String prefix) {
+        final String syntax = "Syntax: `"+prefix+"settings "+configname+" <channelid/#mention>`\n"+description;
+
+        if(args.length >= 3) {
+            Guild guild = e.getGuild();
+            String channelid = args[2];
+
+            TextChannel channel = null;
+            try {
+                channel = guild.getTextChannelById(channelid);
+            }catch (NumberFormatException exception) {
+                if(e.getMessage().getMentionedChannels().size() == 1) {
+                    channel = e.getMessage().getMentionedChannels().get(0);
+                    channelid = channel.getId();
+                }
+            }
+
+            if(channel == null) {
+                e.getChannel().sendMessageEmbeds(Embeds.error(syntax + "\n\n-> `"+channelid+"` could not find a channel with that id.\n" +
+                        "[How to get IDs](https://ozonprice.com/blog/discord-get-role-id/) <- also applies to channels/categories").build()).queue();
+                return;
+            }
+
+            JSONObject guildSettings = GuildSettings.getGuildSettings(guild);
+            guildSettings.put(configname, channelid);
+            GuildSettings.saveGuildSettings(guild, guildSettings);
+
+            e.getChannel().sendMessageEmbeds(Embeds.success("New "+configname+": "+channel.getAsMention() + "(`"+channelid+"`)").build()).queue();
+        }
+        else {
+            e.getChannel().sendMessageEmbeds(Embeds.error(syntax).build()).queue();
         }
     }
 
@@ -58,7 +101,7 @@ public class SettingsCommand extends ListenerAdapter {
             }
 
             if(role == null) {
-                e.getChannel().sendMessage(Embeds.error(syntax + "\n\n-> `"+roleid+"` could not find a role with that id.\n" +
+                e.getChannel().sendMessageEmbeds(Embeds.error(syntax + "\n\n-> `"+roleid+"` could not find a role with that id.\n" +
                         "[How to get IDs](https://ozonprice.com/blog/discord-get-role-id/) <- also applies to channels/categories").build()).queue();
                 return;
             }
@@ -68,7 +111,7 @@ public class SettingsCommand extends ListenerAdapter {
             guildSettings.put("moderation-role", roleid);
             GuildSettings.saveGuildSettings(g, guildSettings);
 
-            e.getChannel().sendMessage(Embeds.success("New Modrole: "+role.getAsMention() + "(`"+roleid+"`)").build()).queue();
+            e.getChannel().sendMessageEmbeds(Embeds.success("New Modrole: "+role.getAsMention() + "(`"+roleid+"`)").build()).queue();
         }
         else {
             e.getChannel().sendMessageEmbeds(Embeds.error(syntax).build()).queue();
@@ -82,7 +125,7 @@ public class SettingsCommand extends ListenerAdapter {
             int amount;
             try { amount = Integer.parseInt(args[2]); }
             catch (NumberFormatException exception) {
-                e.getChannel().sendMessage(Embeds.error(syntax + "\n\n-> `<amount>` must be a Number.").build()).queue();
+                e.getChannel().sendMessageEmbeds(Embeds.error(syntax + "\n\n-> `<amount>` must be a Number.").build()).queue();
                 return;
             }
 
@@ -92,7 +135,7 @@ public class SettingsCommand extends ListenerAdapter {
             guildSettings.put("maxperuser", amount);
             GuildSettings.saveGuildSettings(g, guildSettings);
 
-            e.getChannel().sendMessage(Embeds.success("Set max. amount of tickets per user to `"+amount+"`!").build()).queue();
+            e.getChannel().sendMessageEmbeds(Embeds.success("Set max. amount of tickets per user to `"+amount+"`!").build()).queue();
 
         }
         else {
@@ -111,7 +154,7 @@ public class SettingsCommand extends ListenerAdapter {
 
         int maxtickets = guildSettings.has("maxperuser") ? guildSettings.getInt("maxperuser") : 2;
 
-        channel.sendMessage(Embeds.tickety("" +
+        channel.sendMessageEmbeds(Embeds.tickety("" +
                 "**Current Guild Settings**\n" +
                 "\n" +
                 "**Mod-Role: **" + (modRole == null ? "`NOT SET UP`" : modRole.getAsMention()) + "\n" +
