@@ -86,7 +86,7 @@ public class Setup {
 
 
                             // store guilddata
-                            JSONObject guildData = new JSONObject();
+                            JSONObject guildData = GuildSettings.getGuildSettings(g);
                             guildData.put("ticket-category", category.getId());
                             guildData.put("moderation-role", role.getId());
                             guildData.put("ticketchannel", channel.getId());
