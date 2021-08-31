@@ -7,7 +7,7 @@
 # tickety
 ticket bot for .gg/schule bot-jam
 
-![test](https://github.com/treppenhaus/tickety/actions/workflows/maven.yml/badge.svg)
+![test](https://github.com/treppenhaus/tickety/actions/workflows/maven.yml/badge.svg) [![CodeFactor](https://www.codefactor.io/repository/github/treppenhaus/tickety/badge)](https://www.codefactor.io/repository/github/treppenhaus/tickety)
 
 
 ## contents
