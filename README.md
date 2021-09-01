@@ -10,15 +10,22 @@ ticket bot for .gg/schule bot-jam
 ![test](https://github.com/treppenhaus/tickety/actions/workflows/maven.yml/badge.svg) [![CodeFactor](https://www.codefactor.io/repository/github/treppenhaus/tickety/badge)](https://www.codefactor.io/repository/github/treppenhaus/tickety)
 
 
-## contents
-- feature list
+# contents
+- [Feature List](#feature-list)
 - command list
+- transcripts
 - set up
 - support
 
 
-# feature list
-a
+# feature-list
+Tickety offers a variety of features other ticket bots do.
+- Supports Embeds & Buttons
+- Customizable (Messages, Roles, Channel-Names, ...)
+- Generates Transcripts
+  - Transcripts are sent as a .html-File and can easily be viewed in your browser on PC and mobile.
+  - You can also search for transcripts
+- Autosetup: Be lazy and let the bot set up roles, channels, permissions and even categories! Use `t!autosetup`
 
 
 # setup
