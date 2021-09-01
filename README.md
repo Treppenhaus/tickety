@@ -11,14 +11,14 @@ ticket bot for .gg/schule bot-jam
 
 
 # contents
-- [Feature List](#feature-list)
-- command list
-- transcripts
-- set up
-- support
+- [Features](#features)
+- [Commands](#commands)
+- [Transcripts](#transcripts)
+- [Setup](#setup)
+- [Support](#support)
 
 
-# feature-list
+# features
 Tickety offers a variety of features other ticket bots do.
 - Supports Embeds & Buttons
 - Customizable (Messages, Roles, Channel-Names, ...)
@@ -26,6 +26,25 @@ Tickety offers a variety of features other ticket bots do.
   - Transcripts are sent as a .html-File and can easily be viewed in your browser on PC and mobile.
   - You can also search for transcripts
 - Autosetup: Be lazy and let the bot set up roles, channels, permissions and even categories! Use `t!autosetup`
+
+# commands
+Below is a list of commands (+ description) that are currently available
+`t!autosetup`
+> - generates a role @ticket-moderator
+> - generates a category and sets up the permissions for the created role
+> - also adds two channels to the category: 
+>   - support-ticket: the channel where users can react to open a ticket
+>   - support-transcripts: the channel where transcripts from closed tickets are sent to
+> - sets up permissions for the @everyone and @ticket-moderator roles
+
+`t!open`
+> Opens a new Ticket (Same as reacting in the create-ticket channel).
+> The message gets deleted so this command can be used by anyone in any channel
+
+`t!close`
+> Closes a Ticket, can only be used in a ticket-channel of a user
+> Can be used by the ticket-creator, a person with the ticket-moderator role (the one that is set up) or someone with ADMINISTRATOR-Permissions
+
 
 
 # setup
@@ -53,36 +72,5 @@ Now you can change everything using the below commands:
 
 You can also check if tickety is set up correctly using the `t!settings` or `t!setup` command.
 todo: add screenshot
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
