@@ -17,7 +17,7 @@ ticket bot for .gg/schule bot-jam
 - [Setup](#setup)
 - [Support](#support)
 
-
+---
 # features
 Tickety offers a variety of features other ticket bots do.
 - Supports Embeds & Buttons
@@ -27,8 +27,10 @@ Tickety offers a variety of features other ticket bots do.
   - You can also search for transcripts
 - Autosetup: Be lazy and let the bot set up roles, channels, permissions and even categories! Use `t!autosetup`
 
+---
 # commands
 Below is a list of commands (+ description) that are currently available
+
 `t!autosetup`
 > - generates a role @ticket-moderator
 > - generates a category and sets up the permissions for the created role
@@ -45,8 +47,20 @@ Below is a list of commands (+ description) that are currently available
 > Closes a Ticket, can only be used in a ticket-channel of a user
 > Can be used by the ticket-creator, a person with the ticket-moderator role (the one that is set up) or someone with ADMINISTRATOR-Permissions
 
+`t!settings`
+> Is used to change the guilds settings. Can only be used by Administrators. Described here: [Setup](#setup)
+
+`t!sendmessage <channel>`
+> Resends the create-ticket-embed with a button to the provided channel (Also sets the channel as the ticket-creation channel.)
+
+`t!help`
+> Sends a help Embed with all commands and a [Support](#support) link
+
+`t!invite`
+> Provides a Link to invite the bot
 
 
+---
 # setup
 **Below is a brief tutorial on how to set up tickety for your Discord Guild. There is an easy way and another if you already have channels and roles set up:**
 ### The Easy Way:
