@@ -85,6 +85,13 @@ Now you can change everything using the below commands:
 - \*`t!settings sendticketmessage` - sets the ticket channel where a message with an embed + button is sent to. **TODO: make message configurable!**
 
 You can also check if tickety is set up correctly using the `t!settings` or `t!setup` command.
-todo: add screenshot
+
+
+---
+# support
+You can check this readme on how commands work
+
+If something is broken or you need help, [Open an Issue](https://github.com/Treppenhaus/tickety/issues/new) or tell me on Discord: `treppi#9999`
+You can also join thie Support Server, which is probably the fastest way
 
 
