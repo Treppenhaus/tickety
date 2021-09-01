@@ -52,14 +52,22 @@ public class Setup {
                     .queue(category -> {
 
                 category.createTextChannel(default_channelName).addRolePermissionOverride(g.getPublicRole().getIdLong(), default_channelPermissions_yes, default_channelPermissions_no)
-                        .queue(channel -> channel.sendMessageEmbeds(Embeds.success("**Ticket Support**\nClick the Button below to open a Ticket!")
-                                .setAuthor(g.getSelfMember().getNickname() == null ? g.getSelfMember().getNickname() : g.getSelfMember().getUser().getName(), Tickety.imageUrl)
-                                .build())
-                                .setActionRow(Button.secondary("tickety-create-ticket", "Open Ticket"))
-                                .queue(message -> setupChannel(category, role, channel, log, message)));
+                        .queue(channel -> sendTicketCreationMessage(channel, category, role, log));
 
             });
         });
+    }
+
+    public static void sendTicketCreationMessage(TextChannel channel, Category category, Role role, TextChannel log) {
+        Guild g = channel.getGuild();
+        channel.sendMessageEmbeds(Embeds.success("**Ticket Support**\nClick the Button below to open a Ticket!")
+                .setAuthor(g.getSelfMember().getNickname() == null ? g.getSelfMember().getNickname() : g.getSelfMember().getUser().getName(), Tickety.imageUrl)
+                .build())
+                .setActionRow(Button.secondary("tickety-create-ticket", "Open Ticket"))
+                .queue(message -> {
+                    if(category != null && role != null && log != null)
+                        setupChannel(category, role, channel, log, message);
+                });
     }
 
     public static void setupChannel(Category category, Role role, TextChannel channel, TextChannel log, Message message) {

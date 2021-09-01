@@ -1,6 +1,7 @@
 package eu.treppi.codingschule.ticekty.core.commands;
 
 import eu.treppi.codingschule.ticekty.core.Embeds;
+import eu.treppi.codingschule.ticekty.core.Setup;
 import eu.treppi.codingschule.ticekty.core.Tickety;
 import eu.treppi.codingschule.ticekty.helper.GuildSettings;
 import net.dv8tion.jda.api.Permission;
@@ -40,6 +41,9 @@ public class SettingsCommand extends ListenerAdapter {
                         case "ticketchannel":
                             setChannel("ticketchannel", "The channel with the 'create-ticket'-embed and button.", e, args, prefix);
                             return;
+                        case "sendticketmessage":
+                            sendMessage(e, args, prefix, false);
+                            return;
                         case "category":
                             setCategory(e, args, prefix);
                     }
@@ -49,6 +53,45 @@ public class SettingsCommand extends ListenerAdapter {
                 e.getMessage().replyEmbeds(Embeds.error("For security reasons, only members with the `administrator`-permission are allowed to use `"+prefix+"settings`.").build()).queue();
             }
         }
+    }
+
+    public static void sendMessage(MessageReceivedEvent e, String[] args, String prefix, boolean cmd) {
+        final String syntax = "Syntax: `"+prefix+"settings sendticketmessage <channelid>` or\n" +
+                "Syntax: `"+prefix+"sendmessage <channelid>`\nThe category under which new ticket channels are created.";
+
+        if(args.length >= 3 || (args.length == 2 && cmd)) {
+            Guild guild = e.getGuild();
+            String channelid = cmd ? args[1] : args[2];
+
+            TextChannel channel = null;
+            try {
+                channel = guild.getTextChannelById(channelid);
+            }catch (NumberFormatException exception) {
+                if(e.getMessage().getMentionedChannels().size() == 1) {
+                    channel = e.getMessage().getMentionedChannels().get(0);
+                    channelid = channel.getId();
+                }
+            }
+
+            if(channel == null) {
+                e.getChannel().sendMessageEmbeds(Embeds.error(syntax + "\n\n-> `"+channelid+"` could not find a chatnnel with that id.\n" +
+                        "[How to get IDs](https://ozonprice.com/blog/discord-get-role-id/) <- also applies to channels/categories").build()).queue();
+                return;
+            }
+
+            JSONObject guildSettings = GuildSettings.getGuildSettings(guild);
+            guildSettings.put("ticketchannel", channelid);
+            GuildSettings.saveGuildSettings(guild, guildSettings);
+
+            Setup.sendTicketCreationMessage(channel, null, null, null);
+            e.getChannel().sendMessageEmbeds(Embeds.success("Send Ticket-Creation Embed to "+channel.getAsMention() +
+                    "\nNew ticketchannel: "+channel.getAsMention() + "(`"+channelid+"`)").build()).queue();
+
+        }
+        else {
+            e.getChannel().sendMessageEmbeds(Embeds.error(syntax).build()).queue();
+        }
+
     }
 
     private static void setCategory(MessageReceivedEvent e, String[] args, String prefix) {
