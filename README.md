@@ -7,20 +7,60 @@
 # tickety
 ticket bot for .gg/schule bot-jam
 
-![test](https://github.com/treppenhaus/tickety/actions/workflows/maven.yml/badge.svg)
+![test](https://github.com/treppenhaus/tickety/actions/workflows/maven.yml/badge.svg) [![CodeFactor](https://www.codefactor.io/repository/github/treppenhaus/tickety/badge)](https://www.codefactor.io/repository/github/treppenhaus/tickety)
 
 
-## contents
-- feature list
-- command list
-- set up
-- support
+# contents
+- [Features](#features)
+- [Commands](#commands)
+- [Transcripts](#transcripts)
+- [Setup](#setup)
+- [Support](#support)
+
+---
+# features
+Tickety offers a variety of features other ticket bots do.
+- Supports Embeds & Buttons
+- Customizable (Messages, Roles, Channel-Names, ...)
+- Generates Transcripts
+  - Transcripts are sent as a .html-File and can easily be viewed in your browser on PC and mobile.
+  - You can also search for transcripts
+- Autosetup: Be lazy and let the bot set up roles, channels, permissions and even categories! Use `t!autosetup`
+
+---
+# commands
+Below is a list of commands (+ description) that are currently available
+
+`t!autosetup`
+> - generates a role @ticket-moderator
+> - generates a category and sets up the permissions for the created role
+> - also adds two channels to the category: 
+>   - support-ticket: the channel where users can react to open a ticket
+>   - support-transcripts: the channel where transcripts from closed tickets are sent to
+> - sets up permissions for the @everyone and @ticket-moderator roles
+
+`t!open`
+> Opens a new Ticket (Same as reacting in the create-ticket channel).
+> The message gets deleted so this command can be used by anyone in any channel
+
+`t!close`
+> Closes a Ticket, can only be used in a ticket-channel of a user
+> Can be used by the ticket-creator, a person with the ticket-moderator role (the one that is set up) or someone with ADMINISTRATOR-Permissions
+
+`t!settings`
+> Is used to change the guilds settings. Can only be used by Administrators. Described here: [Setup](#setup)
+
+`t!sendmessage <channel>`
+> Resends the create-ticket-embed with a button to the provided channel (Also sets the channel as the ticket-creation channel.)
+
+`t!help`
+> Sends a help Embed with all commands and a [Support](#support) link
+
+`t!invite`
+> Provides a Link to invite the bot
 
 
-# feature list
-a
-
-
+---
 # setup
 **Below is a brief tutorial on how to set up tickety for your Discord Guild. There is an easy way and another if you already have channels and roles set up:**
 ### The Easy Way:
@@ -45,37 +85,13 @@ Now you can change everything using the below commands:
 - \*`t!settings sendticketmessage` - sets the ticket channel where a message with an embed + button is sent to. **TODO: make message configurable!**
 
 You can also check if tickety is set up correctly using the `t!settings` or `t!setup` command.
-todo: add screenshot
 
 
+---
+# support
+You can check this readme on how commands work
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+If something is broken or you need help, [Open an Issue](https://github.com/Treppenhaus/tickety/issues/new) or tell me on Discord: `treppi#9999`
+You can also join thie Support Server, which is probably the fastest way
 
 
